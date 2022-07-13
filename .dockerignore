@@ -1,0 +1,9 @@
+node_modules
+
+# Secrets
+.env
+
+
+# Source files
+src
+test
