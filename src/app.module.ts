@@ -2,10 +2,24 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { TodosModule } from './todos/todos.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [UsersModule, TodosModule],
+  imports: [
+    // TypeOrmModule.forRoot({
+    //   type: 'mysql',
+    //   host: 'localhost',
+    //   port: 3306,
+    //   username: 'root',
+    //   password: null,
+    //   database: 'test',
+    //   entities: [],
+    //   synchronize: true,
+    // }),
+    UsersModule,
+    PrismaModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
