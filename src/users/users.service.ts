@@ -19,7 +19,7 @@ export class UsersService {
     return await this.dbService.test.findMany();
   }
 
-  async findById(userId: number): Promise<User> {
+  async findById(userId: number) {
     return await this.dbService.test.findUnique({
       where: {
         id: userId,
@@ -27,13 +27,13 @@ export class UsersService {
     });
   }
 
-  async createUser(data: any) {
+  async createUser(data: CreateUserDto) {
     return await this.dbService.test.create({
       data,
     });
   }
 
-  async updateUser(id: any, data: any) {
+  async updateUser(id: any, data: CreateUserDto) {
     return await this.dbService.test.update({
       data,
       where: {

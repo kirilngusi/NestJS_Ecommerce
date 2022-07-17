@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -21,24 +22,34 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get()
-  async queryUsers(@Query('name') name?: string): Promise<User[]> {
+  async queryUsers(@Query('name') name?: string) {
     return await this.userService.findAll(name);
   }
 
   @Get(':id')
-  async getUserById(@Param('id', ParseIntPipe) id: string): Promise<User> {
+  async getUserById(@Param('id', ParseIntPipe) id: string) {
     return await this.userService.findById(Number(id));
   }
 
   @ApiCreatedResponse({ type: User })
   @Post()
-  async createUser(@Body() body: { name: string }) {
-    return await this.userService.createUser(body);
+  async createUser(@Body() body: CreateUserDto) {
+    const createdSuccess = await this.userService.createUser(body);
+    if (!createdSuccess) {
+      // console.log("first")
+      // return createdSuccess;
+      throw new BadRequestException();
+    } else {
+      return createdSuccess;
+    }
   }
 
   @UsePipes(ValidationPipe)
   @Patch('/:id')
-  async updateUser(@Param('id', ParseIntPipe) id: string, @Body() body) {
+  async updateUser(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() body: CreateUserDto,
+  ) {
     return await this.userService.updateUser(id, body);
   }
 
