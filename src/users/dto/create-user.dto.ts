@@ -6,6 +6,6 @@ export class CreateUserDto {
     @MaxLength(10)
     name: string;
 
-    // @ApiProperty({required: false})
-    // age?: number;
+    @ApiProperty({required: false})
+    age?: number;
 }
