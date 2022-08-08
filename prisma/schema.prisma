@@ -11,22 +11,91 @@ datasource db {
 }
 
 model Test {
-  id        Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   name String
-  age Int?
+  age  Int?
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String
+  name     String
+  // email    String
   username String @unique
   password String
+
+  posts     Post[]
+
+  // role     Role
 }
+
+model Post {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  published Boolean
+  title     String
+  content   String?
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+}
+
+// model Order {
+//   id Int @id @default(autoincrement())
+
+//   createdAt DateTime @default(now())
+
+//   name         String
+//   email        String
+//   phone_number String
+//   note         String
+//   status       Boolean @default(false)
+// }
+
+// model Product {
+//   id Int @id @default(autoincrement())
+
+//   category_Id     Category?   @relation(fields: [category_Id_Relation], references: [id])
+//   category_Id_Relation Int 
+//   title       String
+//   price       Float
+//   discord     Int
+//   thumbnail   String
+//   // images      String[]
+//   description String
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   deleted Boolean @default(false)
+// }
+
+// model Category {
+//   id Int @id @default(autoincrement())
+
+//   name String @unique
+
+//   product Product[]
+// }
+
+// model Order_Details {
+//   id Int @id @default(autoincrement())
+
+//   Product_Id  Product?   
+//   price       Float
+//   num         Int
+//   total_money Float
+// }
+
+enum Role {
+  ADMIN
+  USER
+}
+
