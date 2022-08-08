@@ -4,6 +4,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthCredentialDto } from './dto/user.dto';
+import { GetUser } from './decorators/get-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -22,7 +24,17 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/home')
   async home(@Request() req) {
-    console.log(req.user);
-    return ;
+    // console.log(req.user);
+    return this.authService.getUsers();
+  }
+
+  // test
+  @UseGuards(JwtAuthGuard)
+  @Post('/post')
+  async createPost(@Request() req, @GetUser() user:any) {
+    console.log('req', user);
+
+    //decode jwt
+    return this.authService.createPost(req.body, user.id);
   }
 }

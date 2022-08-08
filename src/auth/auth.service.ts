@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from './../prisma/prisma.service';
 import { AuthCredentialDto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
+import { CreatePostInput } from './dto/newPost.dto';
 
 @Injectable()
 export class AuthService {
@@ -45,6 +46,13 @@ export class AuthService {
           name,
           username,
           password: hash,
+          posts: {
+            create: {
+              published: true,
+              title: 'test',
+              content: 'content',
+            },
+          },
         },
       });
       const payload: any = { username: user.username, id: user.id };
@@ -91,5 +99,32 @@ export class AuthService {
     } else {
       throw new UnauthorizedException('User Or Password Incorrect!');
     }
+  }
+  async getUsers() {
+    const allUsers = await this.dbService.user.findMany({
+      include: {
+        posts: true,
+      },
+    });
+    if (!allUsers) {
+      return 'notUser';
+    }
+
+    return allUsers;
+  }
+
+  async createPost(body: CreatePostInput, user: number) {
+    console.log("user", user);
+    const newPost = this.dbService.post.create({
+      data: {
+        published: true,
+        title: body.title,
+        content: body.content,
+
+        //<Int> table Post relationship through  id
+        authorId: user
+      },
+    });
+    return newPost;
   }
 }

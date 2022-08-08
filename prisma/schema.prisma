@@ -27,13 +27,13 @@ model User {
   updatedAt DateTime @updatedAt
 
   name     String
-  email    String
+  // email    String
   username String @unique
   password String
 
   posts     Post[]
 
-  role     Role
+  // role     Role
 }
 
 model Post {
