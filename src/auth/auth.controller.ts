@@ -28,13 +28,13 @@ export class AuthController {
     return this.authService.getUsers();
   }
 
-  // test
-  @UseGuards(JwtAuthGuard)
-  @Post('/post')
-  async createPost(@Request() req, @GetUser() user:any) {
-    console.log('req', user);
+  // // test
+  // @UseGuards(JwtAuthGuard)
+  // @Post('/post')
+  // async createPost(@Request() req, @GetUser() user:any) {
+  //   console.log('req', user);
 
-    //decode jwt
-    return this.authService.createPost(req.body, user.id);
-  }
+  //   //decode jwt
+  //   return this.authService.createPost(req.body, user.id);
+  // }
 }

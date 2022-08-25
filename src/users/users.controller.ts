@@ -21,41 +21,41 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  @Get()
-  async queryUsers(@Query('name') name?: string) {
-    return await this.userService.findAll(name);
-  }
+  // @Get()
+  // async queryUsers(@Query('name') name?: string) {
+  //   return await this.userService.findAll(name);
+  // }
 
-  @Get(':id')
-  async getUserById(@Param('id', ParseIntPipe) id: string) {
-    return await this.userService.findById(Number(id));
-  }
+  // @Get(':id')
+  // async getUserById(@Param('id', ParseIntPipe) id: string) {
+  //   return await this.userService.findById(Number(id));
+  // }
 
-  @ApiCreatedResponse({ type: User })
-  @Post()
-  async createUser(@Body() body: CreateUserDto) {
-    const createdSuccess = await this.userService.createUser(body);
-    if (!createdSuccess) {
-      // console.log("first")
-      // return createdSuccess;
-      throw new BadRequestException();
-    } else {
-      return createdSuccess;
-    }
-  }
+  // @ApiCreatedResponse({ type: User })
+  // @Post()
+  // async createUser(@Body() body: CreateUserDto) {
+  //   const createdSuccess = await this.userService.createUser(body);
+  //   if (!createdSuccess) {
+  //     // console.log("first")
+  //     // return createdSuccess;
+  //     throw new BadRequestException();
+  //   } else {
+  //     return createdSuccess;
+  //   }
+  // }
 
-  @UsePipes(ValidationPipe)
-  @Patch('/:id')
-  async updateUser(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() body: CreateUserDto,
-  ) {
-    return await this.userService.updateUser(id, body);
-  }
+  // @UsePipes(ValidationPipe)
+  // @Patch('/:id')
+  // async updateUser(
+  //   @Param('id', ParseIntPipe) id: string,
+  //   @Body() body: CreateUserDto,
+  // ) {
+  //   return await this.userService.updateUser(id, body);
+  // }
 
-  @UsePipes(ValidationPipe)
-  @Delete('/:id')
-  async deletePost(@Param('id', ParseIntPipe) id: string) {
-    return await this.userService.deletePost(Number(id));
-  }
+  // @UsePipes(ValidationPipe)
+  // @Delete('/:id')
+  // async deletePost(@Param('id', ParseIntPipe) id: string) {
+  //   return await this.userService.deletePost(Number(id));
+  // }
 }
