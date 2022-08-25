@@ -12,99 +12,112 @@ export class AuthService {
     private dbService: PrismaService,
   ) {}
 
-  //   async validateUser(username: string, pass: string): Promise<any> {
-  //     // const user = await this.usersService.findOne(username);
-  //     // if (user && user.password === pass) {
-  //     //   const { password, ...result } = user;
-  //     //   return result;
-  //     // }
-  //     // return null;
-  //     return "hello";
-  //   }
-
   async register(authCredentialDto: AuthCredentialDto) {
     // console.log(user);
     // const payload = { username: user.username };
-    const { name, username, password } = authCredentialDto;
+    const { fullName, email, phone_number, password } = authCredentialDto;
 
-    if (!name || !username || !password) {
+    if (!fullName || !email || !password || !phone_number) {
       return {
         error: 'filling in the blank',
       };
     }
 
     const checkUser = await this.dbService.user.findUnique({
-      where: { username: username },
+      where: { email: email },
+    });
+    const checkPhone = await this.dbService.user.findUnique({
+      where: { phone_number: phone_number },
     });
 
-    if (!checkUser) {
+    if (!checkUser && !checkPhone) {
       const salt = await bcrypt.genSalt();
       const hash = await bcrypt.hash(password, salt);
 
       const user = await this.dbService.user.create({
         data: {
-          name,
-          username,
+          fullName,
+          email,
+          phone_number,
           password: hash,
-          posts: {
-            create: {
-              published: true,
-              title: 'test',
-              content: 'content',
-            },
-          },
+          role: 'USER',
         },
       });
-      const payload: any = { username: user.username, id: user.id };
+      const payload: any = {
+        fullName: user.fullName,
+        email: user.email,
+        id: user.id,
+      };
       const accessToken: any = this.jwtService.sign(payload, {
         expiresIn: '1d',
       });
 
       return {
-        access_token: accessToken,
+        statusCode: 200,
+        message: 'Register Success',
+        data: {
+          fullName: user.fullName,
+          email: user.email,
+          phone_number: user.phone_number,
+          role: user.role,
+          access_token: accessToken,
+        },
       };
     }
-
+    // throw new UnauthorizedException('User Is Exist!');
     return {
-      error: 'User is  exist',
+      statusCode: 401,
+      message: 'User Is Exist!',
     };
   }
 
   //login
   //except - name
-  async login(authCredentialDto: Omit<AuthCredentialDto, 'name'>) {
+  async login(authCredentialDto: Omit<AuthCredentialDto, 'fullName'>) {
     // console.log(user);
     // const payload = { username: user.username };
-    const { username, password } = authCredentialDto;
+    const { email, password } = authCredentialDto;
 
-    if (!username || !password) {
+    if (!email || !password) {
       return {
         error: 'filling in the blank',
       };
     }
 
     const checkUser = await this.dbService.user.findUnique({
-      where: { username: username },
+      where: { email: email },
     });
 
     if (checkUser && (await bcrypt.compare(password, checkUser.password))) {
-      const payload: any = { username: checkUser.username, id: checkUser.id };
+      const payload: any = {
+        fullName: checkUser.fullName,
+        email: checkUser.email,
+        id: checkUser.id,
+      };
       const accessToken: any = this.jwtService.sign(payload, {
         expiresIn: '1d',
       });
 
       return {
-        access_token: accessToken,
+        status: 'success',
+        message: 'Login Success',
+        data: {
+          fullName: checkUser.fullName,
+          email: checkUser.email,
+          phone_number: checkUser.phone_number,
+          role: checkUser.role,
+          access_token: accessToken,
+        },
       };
-    } else {
-      throw new UnauthorizedException('User Or Password Incorrect!');
     }
+    // throw new UnauthorizedException('User Or Password Incorrect!');
+    return {
+      status: 'error',
+      message: 'User Or Password Incorrect!',
+    };
   }
   async getUsers() {
     const allUsers = await this.dbService.user.findMany({
-      include: {
-        posts: true,
-      },
     });
     if (!allUsers) {
       return 'notUser';
@@ -113,18 +126,18 @@ export class AuthService {
     return allUsers;
   }
 
-  async createPost(body: CreatePostInput, user: number) {
-    console.log("user", user);
-    const newPost = this.dbService.post.create({
-      data: {
-        published: true,
-        title: body.title,
-        content: body.content,
+  // async createPost(body: CreatePostInput, user: number) {
+  //   console.log('user', user);
+  //   const newPost = this.dbService.post.create({
+  //     data: {
+  //       published: true,
+  //       title: body.title,
+  //       content: body.content,
 
-        //<Int> table Post relationship through  id
-        authorId: user
-      },
-    });
-    return newPost;
-  }
+  //       //<Int> table Post relationship through  id
+  //       authorId: user,
+  //     },
+  //   });
+  //   return newPost;
+  // }
 }
